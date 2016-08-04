@@ -1,13 +1,19 @@
 package fr.ekito.myweatherapp;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import fr.ekito.myweatherlibrary.WeatherSDK;
+import fr.ekito.myweatherlibrary.di.Injector;
+import fr.ekito.myweatherlibrary.json.geocode.Geocode;
+import fr.ekito.myweatherlibrary.ws.WeatherWS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,9 +27,26 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            public void onClick(final View view) {
+                Snackbar.make(view, "Start !", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                new AsyncTask<Void, Void, Geocode>() {
+                    @Override
+                    protected Geocode doInBackground(Void[] objects) {
+                        Geocode geocode = WeatherSDK.getGeocode("Toulouse, France");
+//                        WeatherWS weatherWS = Injector.get(WeatherWS.class);
+//                        Geocode geocode = weatherWS.geocode("Toulouse, France");
+                        return geocode;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Geocode o) {
+                        super.onPostExecute(o);
+                        Snackbar.make(view, "Geocode : " + o, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                }.execute();
             }
         });
     }
