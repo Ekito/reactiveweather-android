@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        final TextView textView = (TextView) findViewById(R.id.the_text);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -33,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Start !", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
 
-                WeatherSDK.getGeocode("Toulouse, France", new WeatherSDK.Callback<Geocode>() {
+                final String address = "Toulouse, France";
+                WeatherSDK.getGeocode(address, new WeatherSDK.Callback<Geocode>() {
                     @Override
                     public void onSuccess(Geocode geocode) {
                         List<Result> results = geocode.getResults();
@@ -42,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
                             WeatherSDK.getWeather(location.getLat(), location.getLng(), new WeatherSDK.Callback<Weather>() {
                                 @Override
                                 public void onSuccess(Weather weather) {
-                                    Snackbar.make(view, "Weather : " + weather, Snackbar.LENGTH_LONG)
-                                            .setAction("Action", null).show();
-
+//                                    Snackbar.make(view, "Weather : " + weather, Snackbar.LENGTH_LONG)
+//                                            .setAction("Action", null).show();
+                                    textView.setText("weather for :" + address + "...");
                                 }
 
                                 @Override
