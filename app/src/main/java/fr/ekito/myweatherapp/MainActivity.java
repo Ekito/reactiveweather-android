@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getWeather(final View view, String address) {
-        Snackbar.make(view, "Start !", Snackbar.LENGTH_SHORT)
+        Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT)
                 .setAction("Action", null).show();
         this.address = address;
         WeatherSDK.getGeocode(address, new WeatherSDK.Callback<Geocode>() {
