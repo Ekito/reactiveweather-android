@@ -32,40 +32,44 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                Snackbar.make(view, "Start !", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
+                getWeather(view, textView);
+            }
+        });
+    }
 
-                final String address = "Toulouse, France";
-                WeatherSDK.getGeocode(address, new WeatherSDK.Callback<Geocode>() {
-                    @Override
-                    public void onSuccess(Geocode geocode) {
-                        List<Result> results = geocode.getResults();
-                        if (results.size() > 0) {
-                            Location location = results.get(0).getGeometry().getLocation();
-                            WeatherSDK.getWeather(location.getLat(), location.getLng(), new WeatherSDK.Callback<Weather>() {
-                                @Override
-                                public void onSuccess(Weather weather) {
-                                    textView.setText("weather for :" + address + "...");
-                                }
+    private void getWeather(final View view, final TextView textView) {
+        Snackbar.make(view, "Start !", Snackbar.LENGTH_SHORT)
+                .setAction("Action", null).show();
 
-                                @Override
-                                public void onError(Exception error) {
-                                    Snackbar.make(view, "Weather Error : " + error, Snackbar.LENGTH_LONG)
-                                            .setAction("Action", null).show();
-                                }
-                            });
-                        } else {
-                            Snackbar.make(view, "No result in geocode :(", Snackbar.LENGTH_LONG)
+        final String address = "Toulouse, France";
+        WeatherSDK.getGeocode(address, new WeatherSDK.Callback<Geocode>() {
+            @Override
+            public void onSuccess(Geocode geocode) {
+                List<Result> results = geocode.getResults();
+                if (results.size() > 0) {
+                    Location location = results.get(0).getGeometry().getLocation();
+                    WeatherSDK.getWeather(location.getLat(), location.getLng(), new WeatherSDK.Callback<Weather>() {
+                        @Override
+                        public void onSuccess(Weather weather) {
+                            textView.setText("weather for :" + address + "...");
+                        }
+
+                        @Override
+                        public void onError(Exception error) {
+                            Snackbar.make(view, "Weather Error : " + error, Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
-                    }
+                    });
+                } else {
+                    Snackbar.make(view, "No result in geocode :(", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
 
-                    @Override
-                    public void onError(Exception error) {
-                        Snackbar.make(view, "Geocode Error : " + error, Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
-                });
+            @Override
+            public void onError(Exception error) {
+                Snackbar.make(view, "Geocode Error : " + error, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
     }
