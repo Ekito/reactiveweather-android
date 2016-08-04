@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void popLocationDialog(final View view) {
         final EditText input = new EditText(MainActivity.this);
+        input.setHint("Paris, France");
         AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
         builder.setMessage(R.string.location_title)
                 .setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
