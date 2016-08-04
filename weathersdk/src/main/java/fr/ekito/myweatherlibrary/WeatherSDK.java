@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import java.util.Locale;
-
 import fr.ekito.myweatherlibrary.di.Injector;
 import fr.ekito.myweatherlibrary.di.module.MainModule;
 import fr.ekito.myweatherlibrary.json.geocode.Geocode;
@@ -68,12 +66,12 @@ public class WeatherSDK {
 
     public static void getWeather(final Double lat, final Double lng, final Callback<Weather> callback) {
         final Handler mainHandler = getHandler();
-        final String language = Locale.getDefault().getLanguage();
+//        final String language = Locale.getDefault().getLanguage();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final Weather weather = Injector.get(WeatherService.class).weather(lat, lng, language);
+                    final Weather weather = Injector.get(WeatherService.class).weather(lat, lng, "EN");
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
