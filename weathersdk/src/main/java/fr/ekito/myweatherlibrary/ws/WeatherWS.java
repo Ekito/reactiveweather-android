@@ -2,9 +2,9 @@ package fr.ekito.myweatherlibrary.ws;
 
 import fr.ekito.myweatherlibrary.json.geocode.Geocode;
 import fr.ekito.myweatherlibrary.json.weather.Weather;
-import retrofit.http.GET;
-import retrofit.http.Headers;
-import retrofit.http.Query;
+import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.Query;
 
 /**
  * Created by arnaud on 04/08/2016.

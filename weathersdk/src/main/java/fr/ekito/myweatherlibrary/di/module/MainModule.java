@@ -5,16 +5,16 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import java.util.concurrent.TimeUnit;
 
 import fr.ekito.myweatherlibrary.WeatherService;
 import fr.ekito.myweatherlibrary.di.Injector;
 import fr.ekito.myweatherlibrary.di.Module;
 import fr.ekito.myweatherlibrary.ws.WeatherWS;
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -47,18 +47,20 @@ public class MainModule extends Module {
         };
     }
 
+    private OkHttpClient createClient() {
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        return new OkHttpClient.Builder()
+                .connectTimeout(60l, TimeUnit.SECONDS)
+                .readTimeout(60l, TimeUnit.SECONDS)
+                .addInterceptor(httpLoggingInterceptor).build();
+    }
 
     WeatherWS weatherWs() {
-        OkHttpClient client = new OkHttpClient();
-        client.setConnectTimeout(60l, TimeUnit.SECONDS);
-        client.setReadTimeout(60l, TimeUnit.SECONDS);
-
-        RestAdapter.LogLevel level = RestAdapter.LogLevel.FULL;
-        RestAdapter ra = new RestAdapter.Builder()
-                .setClient(new OkClient(client))
-                .setLogLevel(level)
-                .setEndpoint("https://my-weather-api.herokuapp.com/")
-                .build();
-        return ra.create(WeatherWS.class);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://my-weather-api.herokuapp.com/")
+                .client(createClient())
+                .addConverterFactory(GsonConverterFactory.create()).build();
+        return retrofit.create(WeatherWS.class);
     }
 }
