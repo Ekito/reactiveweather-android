@@ -1,14 +1,17 @@
 package fr.ekito.myweatherapp;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,7 +27,9 @@ import fr.ekito.myweatherlibrary.json.weather.Forecastday_;
 import fr.ekito.myweatherlibrary.json.weather.Simpleforecast;
 import fr.ekito.myweatherlibrary.json.weather.Weather;
 
-import static fr.ekito.myweatherapp.WeatherFormat.*;
+import static fr.ekito.myweatherapp.WeatherFormat.displayWeatherIcon;
+import static fr.ekito.myweatherapp.WeatherFormat.filterForecast;
+import static fr.ekito.myweatherapp.WeatherFormat.getTemp;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,16 +86,41 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                getWeather(view);
+                popLocationDialog(view);
             }
         });
     }
 
-    private void getWeather(final View view) {
+    private void popLocationDialog(final View view) {
+        final EditText input = new EditText(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        builder.setMessage(R.string.location_title)
+                .setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                        getWeather(view, input.getText().toString());
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        dialog.dismiss();
+                    }
+                });
+        // Create the AlertDialog object and return it
+        AlertDialog dialog = builder.create();
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        dialog.setView(input);
+        dialog.show();
+    }
+
+    private void getWeather(final View view, String address) {
         Snackbar.make(view, "Start !", Snackbar.LENGTH_SHORT)
                 .setAction("Action", null).show();
-
-        address = "Toulouse, France";
+        this.address = address;
         WeatherSDK.getGeocode(address, new WeatherSDK.Callback<Geocode>() {
             @Override
             public void onSuccess(Geocode geocode) {

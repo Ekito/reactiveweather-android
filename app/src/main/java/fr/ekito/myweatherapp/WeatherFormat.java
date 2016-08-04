@@ -28,7 +28,7 @@ public class WeatherFormat {
 
     @NonNull
     public static String getTemp(Forecastday_ day1) {
-        return day1.getLow().getCelsius() + " - " + day1.getHigh().getCelsius();
+        return day1.getLow().getCelsius() + "°C - " + day1.getHigh().getCelsius()+"°C";
     }
 
     public static void displayWeatherIcon(TextView txt, int size, Forecastday_ f) {
