@@ -4,10 +4,10 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import fr.ekito.myweatherlibrary.di.Injector;
 import fr.ekito.myweatherlibrary.json.geocode.Geocode;
+import fr.ekito.myweatherlibrary.json.weather.Weather;
 import fr.ekito.myweatherlibrary.ws.WeatherWS;
 
 public class WeatherService extends Service {
@@ -20,14 +20,13 @@ public class WeatherService extends Service {
     }
 
     public Geocode geocode(String address) {
-        Geocode geocode = null;
-        try {
-            geocode = weatherWS.geocode(address);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            Log.e(TAG, "error with geocoding " + e);
-        }
+        Geocode geocode = weatherWS.geocode(address);
         return geocode;
+    }
+
+    public Weather weather(Double lat, Double lon, String lang) {
+        Weather weather = weatherWS.weather(lat, lon, lang);
+        return weather;
     }
 
     @Override

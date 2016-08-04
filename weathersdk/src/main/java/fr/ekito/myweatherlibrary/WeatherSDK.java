@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.util.Log;
 
+import java.util.Locale;
+
 import fr.ekito.myweatherlibrary.di.Injector;
 import fr.ekito.myweatherlibrary.di.module.MainModule;
 import fr.ekito.myweatherlibrary.json.geocode.Geocode;
@@ -37,16 +39,40 @@ public class WeatherSDK {
         // unbind service
         applicationContext.unbindService(Injector.get(ServiceConnection.class));
         Injector.clear();
-
     }
 
-    public static Geocode getGeocode(String address) {
-        return Injector.get(WeatherService.class).geocode(address);
-
+    public static void getGeocode(final String address, final Callback<Geocode> callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Geocode geocode = Injector.get(WeatherService.class).geocode(address);
+                    callback.onSuccess(geocode);
+                } catch (Exception e) {
+                    callback.onError(e);
+                }
+            }
+        }).start();
     }
 
-    public interface Callback<T>{
-        void onSucess(T result);
+    public static void getWeather(final Double lat, final Double lng, final Callback<Weather> callback) {
+        final String language = Locale.getDefault().getLanguage();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Weather weather = Injector.get(WeatherService.class).weather(lat, lng, language);
+                    callback.onSuccess(weather);
+                } catch (Exception e) {
+                    callback.onError(e);
+                }
+            }
+        }).start();
+    }
+
+    public interface Callback<T> {
+        void onSuccess(T result);
+
         void onError(Exception error);
     }
 }

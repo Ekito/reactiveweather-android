@@ -1,6 +1,5 @@
 package fr.ekito.myweatherapp;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,10 +9,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.List;
+
 import fr.ekito.myweatherlibrary.WeatherSDK;
-import fr.ekito.myweatherlibrary.di.Injector;
 import fr.ekito.myweatherlibrary.json.geocode.Geocode;
-import fr.ekito.myweatherlibrary.ws.WeatherWS;
+import fr.ekito.myweatherlibrary.json.geocode.Location;
+import fr.ekito.myweatherlibrary.json.geocode.Result;
+import fr.ekito.myweatherlibrary.json.weather.Weather;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,25 +30,41 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                Snackbar.make(view, "Start !", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Start !", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
 
-                new AsyncTask<Void, Void, Geocode>() {
+                WeatherSDK.getGeocode("Toulouse, France", new WeatherSDK.Callback<Geocode>() {
                     @Override
-                    protected Geocode doInBackground(Void[] objects) {
-                        Geocode geocode = WeatherSDK.getGeocode("Toulouse, France");
-//                        WeatherWS weatherWS = Injector.get(WeatherWS.class);
-//                        Geocode geocode = weatherWS.geocode("Toulouse, France");
-                        return geocode;
+                    public void onSuccess(Geocode geocode) {
+                        List<Result> results = geocode.getResults();
+                        if (results.size() > 0) {
+                            Location location = results.get(0).getGeometry().getLocation();
+                            WeatherSDK.getWeather(location.getLat(), location.getLng(), new WeatherSDK.Callback<Weather>() {
+                                @Override
+                                public void onSuccess(Weather weather) {
+                                    Snackbar.make(view, "Weather : " + weather, Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+
+                                }
+
+                                @Override
+                                public void onError(Exception error) {
+                                    Snackbar.make(view, "Weather Error : " + error, Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                }
+                            });
+                        } else {
+                            Snackbar.make(view, "No result in geocode :(", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
                     }
 
                     @Override
-                    protected void onPostExecute(Geocode o) {
-                        super.onPostExecute(o);
-                        Snackbar.make(view, "Geocode : " + o, Snackbar.LENGTH_LONG)
+                    public void onError(Exception error) {
+                        Snackbar.make(view, "Geocode Error : " + error, Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
-                }.execute();
+                });
             }
         });
     }
