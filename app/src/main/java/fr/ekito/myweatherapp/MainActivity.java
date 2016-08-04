@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
                             WeatherSDK.getWeather(location.getLat(), location.getLng(), new WeatherSDK.Callback<Weather>() {
                                 @Override
                                 public void onSuccess(Weather weather) {
-//                                    Snackbar.make(view, "Weather : " + weather, Snackbar.LENGTH_LONG)
-//                                            .setAction("Action", null).show();
                                     textView.setText("weather for :" + address + "...");
                                 }
 
