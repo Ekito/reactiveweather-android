@@ -3,6 +3,7 @@ package fr.ekito.myweatherapp;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +27,9 @@ import fr.ekito.myweatherlibrary.json.geocode.Result;
 import fr.ekito.myweatherlibrary.json.weather.Forecastday_;
 import fr.ekito.myweatherlibrary.json.weather.Simpleforecast;
 import fr.ekito.myweatherlibrary.json.weather.Weather;
+import rx.Observable;
 import rx.Observer;
+import rx.functions.Func1;
 
 import static fr.ekito.myweatherapp.WeatherFormat.displayWeatherIcon;
 import static fr.ekito.myweatherapp.WeatherFormat.filterForecast;
@@ -53,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
     private Date now;
     private String address;
 
+    @Nullable
+    static private Location extractLocation(Geocode geocode) {
+        List<Result> results = geocode.getResults();
+        if (results.size() > 0)
+            return results.get(0).getGeometry().getLocation();
+        else return null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,46 +134,36 @@ public class MainActivity extends AppCompatActivity {
                 .setAction("Action", null).show();
         this.address = address;
 
-        WeatherSDK.getGeocode(address).subscribe(new Observer<Geocode>() {
-            @Override
-            public void onCompleted() {
+        WeatherSDK.getGeocode(address)
+                .map(new Func1<Geocode, Location>() {
+                    @Override
+                    public Location call(Geocode geocode) {
+                        return extractLocation(geocode);
+                    }
+                })
+                .switchMap(new Func1<Location, Observable<Weather>>() {
+                    @Override
+                    public Observable<Weather> call(Location location) {
+                        return WeatherSDK.getWeather(location.getLat(), location.getLng());
+                    }
+                })
+                .subscribe(new Observer<Weather>() {
+                    @Override
+                    public void onCompleted() {
 
-            }
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                Snackbar.make(view, "Geocode Error : " + e, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        Snackbar.make(view, "Weather Error : " + e, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
 
-            @Override
-            public void onNext(Geocode geocode) {
-                List<Result> results = geocode.getResults();
-                if (results.size() > 0) {
-                    Location location = results.get(0).getGeometry().getLocation();
-                    WeatherSDK.getWeather(location.getLat(), location.getLng()).subscribe(new Observer<Weather>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Snackbar.make(view, "Weather Error : " + e, Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }
-
-                        @Override
-                        public void onNext(Weather weather) {
-                            updateWeather(weather);
-                        }
-                    });
-                } else {
-                    Snackbar.make(view, "No result in geocode :(", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            }
-        });
+                    @Override
+                    public void onNext(Weather weather) {
+                        updateWeather(weather);
+                    }
+                });
     }
 
     public void updateWeather(Weather weather) {
