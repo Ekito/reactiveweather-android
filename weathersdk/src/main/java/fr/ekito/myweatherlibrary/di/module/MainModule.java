@@ -14,6 +14,7 @@ import fr.ekito.myweatherlibrary.ws.WeatherWS;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
@@ -60,7 +61,8 @@ public class MainModule extends Module {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://my-weather-api.herokuapp.com/")
                 .client(createClient())
-                .addConverterFactory(GsonConverterFactory.create()).build();
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).build();
         return retrofit.create(WeatherWS.class);
     }
 }

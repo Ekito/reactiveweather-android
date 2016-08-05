@@ -26,6 +26,7 @@ import fr.ekito.myweatherlibrary.json.geocode.Result;
 import fr.ekito.myweatherlibrary.json.weather.Forecastday_;
 import fr.ekito.myweatherlibrary.json.weather.Simpleforecast;
 import fr.ekito.myweatherlibrary.json.weather.Weather;
+import rx.Observer;
 
 import static fr.ekito.myweatherapp.WeatherFormat.displayWeatherIcon;
 import static fr.ekito.myweatherapp.WeatherFormat.filterForecast;
@@ -122,34 +123,45 @@ public class MainActivity extends AppCompatActivity {
         Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT)
                 .setAction("Action", null).show();
         this.address = address;
-        WeatherSDK.getGeocode(address, new WeatherSDK.Callback<Geocode>() {
+
+        WeatherSDK.getGeocode(address).subscribe(new Observer<Geocode>() {
             @Override
-            public void onSuccess(Geocode geocode) {
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Snackbar.make(view, "Geocode Error : " + e, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+
+            @Override
+            public void onNext(Geocode geocode) {
                 List<Result> results = geocode.getResults();
                 if (results.size() > 0) {
                     Location location = results.get(0).getGeometry().getLocation();
-                    WeatherSDK.getWeather(location.getLat(), location.getLng(), new WeatherSDK.Callback<Weather>() {
+                    WeatherSDK.getWeather(location.getLat(), location.getLng()).subscribe(new Observer<Weather>() {
                         @Override
-                        public void onSuccess(Weather weather) {
-                            updateWeather(weather);
+                        public void onCompleted() {
+
                         }
 
                         @Override
-                        public void onError(Exception error) {
-                            Snackbar.make(view, "Weather Error : " + error, Snackbar.LENGTH_LONG)
+                        public void onError(Throwable e) {
+                            Snackbar.make(view, "Weather Error : " + e, Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
+                        }
+
+                        @Override
+                        public void onNext(Weather weather) {
+                            updateWeather(weather);
                         }
                     });
                 } else {
                     Snackbar.make(view, "No result in geocode :(", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
-            }
-
-            @Override
-            public void onError(Exception error) {
-                Snackbar.make(view, "Geocode Error : " + error, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
     }
