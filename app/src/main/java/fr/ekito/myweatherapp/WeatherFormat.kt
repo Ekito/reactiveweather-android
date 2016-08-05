@@ -1,13 +1,19 @@
 package fr.ekito.myweatherapp
 
 import android.widget.TextView
+import fr.ekito.myweatherlibrary.json.geocode.Geocode
+import fr.ekito.myweatherlibrary.json.geocode.Location
 import fr.ekito.myweatherlibrary.json.weather.Forecastday_
 
 /**
  * Created by arnaud on 04/08/2016.
  */
 object WeatherFormat {
-    
+
+    fun getLocation(geocode: Geocode): Location? {
+        return geocode.results.first().geometry.location
+    }
+
     fun weatherTxt(forecastday: Forecastday_): String {
         return forecastday.conditions //.getTitle() + "\n" + forecastday.getFcttextMetric();
     }
@@ -17,12 +23,12 @@ object WeatherFormat {
                 .take(4)
     }
 
-    fun getTemp(day1: Forecastday_): String {
-        return day1.low.celsius + "°C - " + day1.high.celsius + "°C"
+    fun getTemp(day: Forecastday_): String {
+        return day.low.celsius + "°C - " + day.high.celsius + "°C"
     }
 
     fun displayWeatherIcon(txt: TextView, size: Int, f: Forecastday_) {
-        txt.typeface = MainApplication.getClimaconFont()
+        txt.typeface = MainApplication.climaconFont
         txt.text = getWeatherCode(f.icon)
         txt.textSize = size.toFloat()
     }

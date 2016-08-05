@@ -12,23 +12,13 @@ import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import fr.ekito.myweatherlibrary.WeatherSDK
-import fr.ekito.myweatherlibrary.json.geocode.Geocode
-import fr.ekito.myweatherlibrary.json.geocode.Location
 import fr.ekito.myweatherlibrary.json.weather.Weather
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var now: Date? = null
-
-    private fun extractLocation(geocode: Geocode): Location? {
-        val results = geocode.results
-        if (results.size > 0)
-            return results[0].geometry.location
-        else
-            return null
-    }
+    var now: Date? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener { view -> popLocationDialog(view) }
     }
 
-    private fun popLocationDialog(view: View) {
+    fun popLocationDialog(view: View) {
         val input = EditText(this@MainActivity)
         input.hint = "Paris, France"
         val builder = AlertDialog.Builder(view.context)
@@ -64,15 +54,14 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun getWeather(view: View, address: String) {
+    fun getWeather(view: View, address: String) {
         Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).setAction("Action", null).show()
 
         WeatherSDK.getGeocode(address)
-                .map { geocode -> extractLocation(geocode) }
+                .map { geocode -> WeatherFormat.getLocation(geocode) }
                 .switchMap { location -> WeatherSDK.getWeather(location!!.lat, location!!.lng) }
                 .doOnError { e -> Snackbar.make(view, "Weather Error : " + e, Snackbar.LENGTH_LONG).setAction("Action", null).show() }
                 .subscribe { weather -> updateWeather(weather, address) }
-
     }
 
     fun updateWeather(weather: Weather, address: String) {
