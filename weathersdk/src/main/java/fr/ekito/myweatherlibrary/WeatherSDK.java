@@ -4,14 +4,15 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import fr.ekito.myweatherlibrary.di.Injector;
 import fr.ekito.myweatherlibrary.di.module.MainModule;
 import fr.ekito.myweatherlibrary.json.geocode.Geocode;
 import fr.ekito.myweatherlibrary.json.weather.Weather;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by arnaud on 04/08/2016.
@@ -39,55 +40,15 @@ public class WeatherSDK {
         Injector.clear();
     }
 
-    public static void getGeocode(final String address, final Callback<Geocode> callback) {
-        final Handler mainHandler = getHandler();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final Geocode geocode = Injector.get(WeatherService.class).geocode(address);
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onSuccess(geocode);
-                        }
-                    });
-                } catch (Exception e) {
-                    callback.onError(e);
-                }
-            }
-        }).start();
+    public static Observable<Geocode> getGeocode(final String address) {
+        return Injector.get(WeatherService.class).geocode(address)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    @NonNull
-    private static Handler getHandler() {
-        return new Handler(Injector.get(Application.class).getMainLooper());
-    }
-
-    public static void getWeather(final Double lat, final Double lng, final Callback<Weather> callback) {
-        final Handler mainHandler = getHandler();
-//        final String language = Locale.getDefault().getLanguage();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final Weather weather = Injector.get(WeatherService.class).weather(lat, lng, "EN");
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onSuccess(weather);
-                        }
-                    });
-                } catch (Exception e) {
-                    callback.onError(e);
-                }
-            }
-        }).start();
-    }
-
-    public interface Callback<T> {
-        void onSuccess(T result);
-
-        void onError(Exception error);
+    public static Observable<Weather> getWeather(final Double lat, final Double lng) {
+        return Injector.get(WeatherService.class).weather(lat, lng, "EN")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

@@ -9,6 +9,7 @@ import fr.ekito.myweatherlibrary.di.Injector;
 import fr.ekito.myweatherlibrary.json.geocode.Geocode;
 import fr.ekito.myweatherlibrary.json.weather.Weather;
 import fr.ekito.myweatherlibrary.ws.WeatherWS;
+import rx.Observable;
 
 public class WeatherService extends Service {
 
@@ -19,14 +20,12 @@ public class WeatherService extends Service {
     public WeatherService() {
     }
 
-    public Geocode geocode(String address) {
-        Geocode geocode = weatherWS.geocode(address);
-        return geocode;
+    public Observable<Geocode> geocode(String address) {
+        return weatherWS.geocode(address);
     }
 
-    public Weather weather(Double lat, Double lon, String lang) {
-        Weather weather = weatherWS.weather(lat, lon, lang);
-        return weather;
+    public Observable<Weather> weather(Double lat, Double lon, String lang) {
+        return weatherWS.weather(lat, lon, lang);
     }
 
     @Override
