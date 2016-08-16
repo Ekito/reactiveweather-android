@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     fun popLocationDialog(view: View) {
         val input = EditText(this@MainActivity)
-        input.hint = "Paris, France"
+        input.hint = "i.e: Paris, France"
         val builder = AlertDialog.Builder(view.context)
         builder.setMessage(R.string.location_title).setPositiveButton(R.string.search) { dialog, id ->
             dialog.dismiss()
