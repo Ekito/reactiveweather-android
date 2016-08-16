@@ -1,7 +1,10 @@
-# A reactive android weather app
+# Making your Android API reactive
 
-> This is about a transformation: finding a way of writing a reactive android API with RxJava/RxAndroid from its imperative version. It could be easily applied to any project that work with multiple flux of data. Let’s take a simple app, the weather app (sources available on github).
-Android app used for the article : https://www.ekito.fr/people/making-android-api-reactive/
+> see article on ekito's website : https://www.ekito.fr/people/making-android-api-reactive/
+
+> This is about a transformation: finding a way of writing a reactive android API with RxJava/RxAndroid from its imperative version. It could be easily applied to any project that work with multiple flux of data. 
+
+Here is the source code for the weather app. 
 
 The android project contains 2 modules :
 - app (the weather app itself)
