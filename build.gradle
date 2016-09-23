@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.0.3'
+        kotlin_version = '1.0.4'
         retrofit_version = '2.1.0'
         okhttp_version = '3.3.1'
     }

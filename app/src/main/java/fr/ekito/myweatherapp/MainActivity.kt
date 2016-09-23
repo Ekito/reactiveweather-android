@@ -26,16 +26,17 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
-        weather_loadlayout.visibility = View.VISIBLE
-        weather_mainlayout.visibility = View.GONE
-
         val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener { view -> popLocationDialog(view) }
+
+        weather_loadlayout.visibility = View.VISIBLE
+        weather_mainlayout.visibility = View.GONE
     }
 
     fun popLocationDialog(view: View) {
         val input = EditText(this@MainActivity)
         input.hint = "i.e: Paris, France"
+
         val builder = AlertDialog.Builder(view.context)
         builder.setMessage(R.string.location_title).setPositiveButton(R.string.search) { dialog, id ->
             dialog.dismiss()
@@ -82,17 +83,14 @@ class MainActivity : AppCompatActivity() {
 
             WeatherFormat.displayWeatherIcon(weather_day1, 50, forecastday[1])
             val day1 = forecastday[1]
-            weather_daytext1.text = "Day +1"
             weather_temptext1.text = WeatherFormat.getTemp(day1)
 
             val day2 = forecastday[2]
             WeatherFormat.displayWeatherIcon(weather_day2, 50, day2)
-            weather_daytext2.text = "Day +2"
             weather_temptext2.text = WeatherFormat.getTemp(day2)
 
             val day3 = forecastday[3]
             WeatherFormat.displayWeatherIcon(weather_day3, 50, day3)
-            weather_daytext3.text = "Day +3"
             weather_temptext3.text = WeatherFormat.getTemp(day3)
 
         }
