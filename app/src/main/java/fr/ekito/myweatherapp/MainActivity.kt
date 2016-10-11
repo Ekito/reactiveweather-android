@@ -23,10 +23,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
-        //val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener { view -> popLocationDialog(view) }
 
         weather_loadlayout.visibility = View.VISIBLE
@@ -56,7 +54,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getWeather(view: View, address: String) {
-        Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).setAction("Action", null).show()
+        Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).show()
 
         WeatherSDK.getGeocode(address)
                 .map(Geocode::getLocation) //map directly to function
