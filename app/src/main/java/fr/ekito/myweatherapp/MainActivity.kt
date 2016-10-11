@@ -1,18 +1,18 @@
 package fr.ekito.myweatherapp
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import fr.ekito.myweatherlibrary.WeatherSDK
+import fr.ekito.myweatherlibrary.json.geocode.Geocode
 import fr.ekito.myweatherlibrary.json.weather.Weather
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
 
@@ -23,10 +23,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        //val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
-        val fab = findViewById(R.id.fab) as FloatingActionButton
+        //val fab = findViewById(R.id.fab) as FloatingActionButton
         fab.setOnClickListener { view -> popLocationDialog(view) }
 
         weather_loadlayout.visibility = View.VISIBLE
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun popLocationDialog(view: View) {
-        val input = EditText(this@MainActivity)
+        val input = EditText(this)
         input.hint = "i.e: Paris, France"
 
         val builder = AlertDialog.Builder(view.context)
@@ -59,10 +59,11 @@ class MainActivity : AppCompatActivity() {
         Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).setAction("Action", null).show()
 
         WeatherSDK.getGeocode(address)
-                .map { geocode -> WeatherFormat.getLocation(geocode) }
-                .switchMap { location -> WeatherSDK.getWeather(location!!.lat, location!!.lng) }
-                .doOnError { e -> Snackbar.make(view, "Weather Error : " + e, Snackbar.LENGTH_LONG).setAction("Action", null).show() }
-                .subscribe { weather -> updateWeather(weather, address) }
+                .map(Geocode::getLocation) //map directly to function
+                .switchMap { location -> WeatherSDK.getWeather(location!!.lat, location.lng) } // explicit NPE if no location
+                .doOnError { e -> Snackbar.make(view, "Weather Error : $e", Snackbar.LENGTH_LONG).show() }
+                .onErrorReturn { t -> null } // catch uncaught exception & return null
+                .subscribe { weather -> if (weather != null) updateWeather(weather, address) }
     }
 
     fun updateWeather(weather: Weather, address: String) {
@@ -76,37 +77,31 @@ class MainActivity : AppCompatActivity() {
 
         if (weather.forecast != null) {
             val txtForecast = weather.forecast.simpleforecast
-            val forecastday = WeatherFormat.filterForecast(txtForecast.forecastday)
+            val forecastday = WeatherUtil.filterForecast(txtForecast.forecastday)
             val day0 = forecastday[0]
-            weather_main.text = "Today : " + WeatherFormat.weatherTxt(day0) + "\n" + WeatherFormat.getTemp(day0)
-            WeatherFormat.displayWeatherIcon(weather_mainicon, 100, day0)
+            weather_main.text = "Today : " + day0.weatherTxt() + "\n" + day0.getTemp() // Use extensions :)
+            WeatherUtil.updateWeatherIcon(weather_mainicon, 100, day0)
 
-            WeatherFormat.displayWeatherIcon(weather_day1, 50, forecastday[1])
+            WeatherUtil.updateWeatherIcon(weather_day1, 50, forecastday[1])
             val day1 = forecastday[1]
-            weather_temptext1.text = WeatherFormat.getTemp(day1)
+            weather_temptext1.text = day1.getTemp()
 
             val day2 = forecastday[2]
-            WeatherFormat.displayWeatherIcon(weather_day2, 50, day2)
-            weather_temptext2.text = WeatherFormat.getTemp(day2)
+            WeatherUtil.updateWeatherIcon(weather_day2, 50, day2)
+            weather_temptext2.text = day2.getTemp()
 
             val day3 = forecastday[3]
-            WeatherFormat.displayWeatherIcon(weather_day3, 50, day3)
-            weather_temptext3.text = WeatherFormat.getTemp(day3)
-
+            WeatherUtil.updateWeatherIcon(weather_day3, 50, day3)
+            weather_temptext3.text = day3.getTemp()
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         when (item.itemId) {
             R.id.action_settings -> return true
             else -> return super.onOptionsItemSelected(item)

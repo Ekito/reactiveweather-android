@@ -59,7 +59,7 @@ public class MainModule extends Module {
 
     WeatherWS weatherWs() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://go-weather-api.herokuapp.com/")
+                .baseUrl("https://my-weather-api.herokuapp.com/")
                 .client(createClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create()).build();

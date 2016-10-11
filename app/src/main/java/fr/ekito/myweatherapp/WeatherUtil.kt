@@ -8,26 +8,29 @@ import fr.ekito.myweatherlibrary.json.weather.Forecastday_
 /**
  * Created by arnaud on 04/08/2016.
  */
-object WeatherFormat {
 
-    fun getLocation(geocode: Geocode): Location? {
-        return geocode.results.first().geometry.location
-    }
+//extensions
+fun Geocode.getLocation(): Location? {
+    return results.first().geometry.location
+}
 
-    fun weatherTxt(forecastday: Forecastday_): String {
-        return forecastday.conditions //.getTitle() + "\n" + forecastday.getFcttextMetric();
-    }
+fun Forecastday_.weatherTxt(): String {
+    return conditions //.getTitle() + "\n" + forecastday.getFcttextMetric();
+}
+
+fun Forecastday_.getTemp(): String {
+    return low.celsius + "°C - " + high.celsius + "°C"
+}
+
+// helper
+object WeatherUtil {
 
     fun filterForecast(forecastday: List<Forecastday_>): List<Forecastday_> {
         return forecastday.filter { f -> !f.icon.startsWith("nt_") }
                 .take(4)
     }
 
-    fun getTemp(day: Forecastday_): String {
-        return day.low.celsius + "°C - " + day.high.celsius + "°C"
-    }
-
-    fun displayWeatherIcon(txt: TextView, size: Int, f: Forecastday_) {
+    fun updateWeatherIcon(txt: TextView, size: Int, f: Forecastday_) {
         txt.typeface = MainApplication.climaconFont
         txt.text = getWeatherCode(f.icon)
         txt.textSize = size.toFloat()
