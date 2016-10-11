@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     fun getWeather(view: View, address: String) {
         Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).show()
 
-        WeatherSDK.getGeocode(address)
+        WeatherSDK.getGeocode(address) //Observable<Geocode>
                 .map(Geocode::getLocation) //map directly to function
                 .switchMap { location -> WeatherSDK.getWeather(location!!.lat, location.lng) } // explicit NPE if no location
                 .doOnError { e -> Snackbar.make(view, "Weather Error : $e", Snackbar.LENGTH_LONG).show() }
