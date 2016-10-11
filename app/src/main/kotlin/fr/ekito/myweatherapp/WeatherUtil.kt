@@ -11,36 +11,35 @@ import fr.ekito.myweatherlibrary.json.weather.Forecastday_
 
 //extensions
 fun Geocode.getLocation(): Location? {
-    return results.first().geometry.location
+    return results.first().geometry?.location
 }
 
 fun Forecastday_.weatherTxt(): String {
-    return conditions //.getTitle() + "\n" + forecastday.getFcttextMetric();
+    return conditions!! //.getTitle() + "\n" + forecastday.getFcttextMetric();
 }
 
 fun Forecastday_.getTemp(): String {
-    return low.celsius + "°C - " + high.celsius + "°C"
+    return low!!.celsius + "°C - " + high!!.celsius + "°C"
 }
 
 // helper
 object WeatherUtil {
 
     fun filterForecast(forecastday: List<Forecastday_>): List<Forecastday_> {
-        return forecastday.filter { f -> !f.icon.startsWith("nt_") }
+        return forecastday.filter { f -> !f.icon!!.startsWith("nt_") }
                 .take(4)
     }
 
     fun updateWeatherIcon(txt: TextView, size: Int, f: Forecastday_) {
         txt.typeface = MainApplication.climaconFont
-        txt.text = getWeatherCode(f.icon)
+        txt.text = getWeatherCode(f.icon!!)
         txt.textSize = size.toFloat()
     }
 
     fun getWeatherCode(icon: String): String {
-        val icon = icon.replace("nt_".toRegex(), "")
-        when (icon) {
-            "cloudy" -> return Character.toString(0x049.toChar())
-            "partlycloudy" -> return Character.toString(0x022.toChar())
+        val icon = icon.replace("nt_", "")
+        when {
+            icon.contains("cloudy") -> return Character.toString(0x022.toChar())
             else -> return Character.toString(0x049.toChar())
         }
     }

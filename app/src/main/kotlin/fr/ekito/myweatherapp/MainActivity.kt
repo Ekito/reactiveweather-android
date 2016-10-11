@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
 
         WeatherSDK.getGeocode(address) //Observable<Geocode>
                 .map(Geocode::getLocation) //map directly to function
-                .switchMap { location -> WeatherSDK.getWeather(location!!.lat, location.lng) } // explicit NPE if no location
+                .switchMap { location -> WeatherSDK.getWeather(location!!.lat!!, location.lng!!) } // explicit NPE if no location
                 .doOnError { e -> Snackbar.make(view, "Weather Error : $e", Snackbar.LENGTH_LONG).show() }
                 .onErrorReturn { t -> null } // catch uncaught exception & return null
                 .subscribe { weather -> if (weather != null) updateWeather(weather, address) }
@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity() {
         weather_title.text = getString(R.string.weather_title) + " " + address + "\n" + dateFormat.format(now) + " " + timeFormat.format(now)
 
         if (weather.forecast != null) {
-            val txtForecast = weather.forecast.simpleforecast
-            val forecastday = WeatherUtil.filterForecast(txtForecast.forecastday)
+            val txtForecast = weather.forecast?.simpleforecast
+            val forecastday = WeatherUtil.filterForecast(txtForecast!!.forecastday)
             val day0 = forecastday[0]
             weather_main.text = "Today : " + day0.weatherTxt() + "\n" + day0.getTemp() // Use extensions :)
             WeatherUtil.updateWeatherIcon(weather_mainicon, 100, day0)
