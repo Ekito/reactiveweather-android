@@ -12,12 +12,15 @@ import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
 /**
- * Created by arnaud on 04/08/2016.
+ * Weather SDK
  */
 object WeatherSDK {
 
     private val TAG = WeatherSDK::class.java.simpleName
 
+    /**
+     * INit SDK and context
+     */
     fun init(context: Application) {
         KInjector.context = context
 
@@ -35,10 +38,16 @@ object WeatherSDK {
         KInjector.close()
     }
 
+    /**
+     * Get observable geocode for given address
+     */
     fun getGeocode(address: String): Observable<Geocode> {
         return KInjector.weatherWS.geocode(address).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }
 
+    /**
+     * Get observable weather for given location
+     */
     fun getWeather(lat: Double, lng: Double): Observable<Weather> {
         return KInjector.weatherWS.weather(lat, lng, "EN").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
     }

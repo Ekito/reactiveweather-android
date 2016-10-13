@@ -1,6 +1,5 @@
 package fr.ekito.myweatherapp
 
-import android.widget.TextView
 import com.joanzapata.iconify.widget.IconTextView
 import fr.ekito.myweatherlibrary.json.geocode.Geocode
 import fr.ekito.myweatherlibrary.json.geocode.Location

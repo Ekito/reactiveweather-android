@@ -10,9 +10,11 @@ import fr.ekito.myweatherlibrary.json.weather.Weather
 import fr.ekito.myweatherlibrary.ws.WeatherWS
 import rx.Observable
 
+/**
+ * Weather service
+ */
 class WeatherService : Service() {
 
-    val TAG = WeatherService::class.java.simpleName
     val mBinder = LocalBinder()
     lateinit var weatherWS: WeatherWS
 
@@ -32,10 +34,17 @@ class WeatherService : Service() {
             get() = this@WeatherService
     }
 
+    /**
+     * Get geocode for given address
+     */
     fun geocode(address: String): Observable<Geocode> {
         return weatherWS.geocode(address)
     }
 
+    /**
+     * Get weather for given gps location
+     * @see geocode to get gps location for given address
+     */
     fun weather(lat: Double, lon: Double, lang: String): Observable<Weather> {
         return weatherWS.weather(lat, lon, lang)
     }

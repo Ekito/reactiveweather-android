@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
         weather_mainlayout.visibility = View.GONE
     }
 
+    /**
+     * ask location dialog
+     */
     fun popLocationDialog(view: View) {
         val input = EditText(this)
         input.hint = "i.e: Paris, France"
@@ -53,6 +56,9 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    /**
+     * get the weather
+     */
     fun getWeather(view: View, address: String) {
         Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).show()
 
@@ -64,6 +70,9 @@ class MainActivity : AppCompatActivity() {
                 .subscribe { weather -> if (weather != null) updateWeather(weather, address) }
     }
 
+    /**
+     * update UI from weather result
+     */
     fun updateWeather(weather: Weather, address: String) {
         weather_loadlayout.visibility = View.GONE
         weather_mainlayout.visibility = View.VISIBLE

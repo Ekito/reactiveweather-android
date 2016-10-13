@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
- * Created by arnaud on 11/10/2016.
+ * Components injection
  */
 object KInjector {
     val TAG = KInjector::class.java.simpleName
@@ -23,6 +23,7 @@ object KInjector {
     var context: Context? = null
 
     var service: WeatherService? = null
+
     val serviceConnection: ServiceConnection by lazy {
         object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -53,6 +54,6 @@ object KInjector {
     }
 
     fun close() {
-
+        //close sdk resource
     }
 }
