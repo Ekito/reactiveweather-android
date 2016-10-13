@@ -49,34 +49,34 @@
         <TextView
             android:id="@+id/weather_title"
             style="@style/Text.CoolNCamp.Thin"
-            android:layout_width="0dp"
+            android:layout_width="309dp"
             android:layout_height="84dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="@string/weather_title"
             android:textColor="@color/white"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/weather_mainicon"
             style="@style/Text.CoolNCamp.Thin.Big"
+            android:layout_width="144dp"
             android:layout_height="192dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:textColor="@color/white"
             app:layout_constraintLeft_toLeftOf="@+id/weather_title"
             app:layout_constraintTop_toBottomOf="@+id/weather_title"
-            android:text="Weather Icon"
-            android:layout_width="178dp" />
+            android:text="Weather Icon" />
 
         <TextView
             android:id="@+id/weather_main"
             style="@style/Text.CoolNCamp.Thin.Big"
-            android:layout_width="0dp"
+            android:layout_width="142dp"
             android:layout_height="0dp"
             android:layout_margin="16dp"
             android:gravity="center"
@@ -84,19 +84,62 @@
             android:text="Today's Weather text"
             app:layout_constraintTop_toTopOf="@+id/weather_mainicon"
             app:layout_constraintBottom_toBottomOf="@+id/weather_mainicon"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintRight_toRightOf="@+id/weather_title"
             android:layout_marginStart="8dp"
             app:layout_constraintLeft_toRightOf="@+id/weather_mainicon"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintHorizontal_bias="1.0" />
 
 
         <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="118dp"
+            android:id="@+id/linearLayout3"
+            android:layout_width="92dp"
             android:layout_height="0dp"
             android:layout_gravity="center"
-            android:layout_marginStart="8dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/weather_mainicon"
+            app:layout_constraintTop_toBottomOf="@+id/weather_mainicon"
+            app:layout_constraintVertical_bias="0.75">
+
+            <TextView
+                android:id="@+id/weather_daytext1"
+                style="@style/Text.CoolNCamp.Thin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/weather_margin"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="Day +1" />
+
+            <TextView
+                android:id="@+id/weather_day1"
+                style="@style/Text.CoolNCamp.Thin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/weather_margin"
+                android:gravity="center"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/weather_temptext1"
+                style="@style/Text.CoolNCamp.Thin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/weather_margin"
+                android:gravity="center"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="91dp"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="16dp"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
@@ -133,17 +176,16 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_width="92dp"
             android:layout_height="0dp"
             android:layout_gravity="center"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
             app:layout_constraintLeft_toRightOf="@+id/linearLayout"
-            app:layout_constraintTop_toTopOf="@+id/linearLayout"
-            android:layout_width="116dp"
-            app:layout_constraintRight_toRightOf="@+id/weather_main">
+            app:layout_constraintTop_toTopOf="@+id/linearLayout">
 
             <TextView
                 android:id="@+id/weather_daytext3"
@@ -166,49 +208,6 @@
 
             <TextView
                 android:id="@+id/weather_temptext3"
-                style="@style/Text.CoolNCamp.Thin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/weather_margin"
-                android:gravity="center"
-                android:textColor="@color/white" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linearLayout3"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/weather_mainicon"
-            app:layout_constraintTop_toBottomOf="@+id/weather_mainicon"
-            app:layout_constraintVertical_bias="0.75"
-            android:layout_width="112dp">
-
-            <TextView
-                android:id="@+id/weather_daytext1"
-                style="@style/Text.CoolNCamp.Thin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/weather_margin"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:text="Day +1" />
-
-            <TextView
-                android:id="@+id/weather_day1"
-                style="@style/Text.CoolNCamp.Thin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/weather_margin"
-                android:gravity="center"
-                android:textColor="@color/white" />
-
-            <TextView
-                android:id="@+id/weather_temptext1"
                 style="@style/Text.CoolNCamp.Thin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
