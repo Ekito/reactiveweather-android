@@ -1,6 +1,7 @@
 package fr.ekito.myweatherapp
 
 import android.widget.TextView
+import com.joanzapata.iconify.widget.IconTextView
 import fr.ekito.myweatherlibrary.json.geocode.Geocode
 import fr.ekito.myweatherlibrary.json.geocode.Location
 import fr.ekito.myweatherlibrary.json.weather.Forecastday_
@@ -30,17 +31,17 @@ object WeatherUtil {
                 .take(4)
     }
 
-    fun updateWeatherIcon(txt: TextView, size: Int, f: Forecastday_) {
-        txt.typeface = MainApplication.climaconFont
+    fun updateWeatherIcon(txt: IconTextView, size: Int, f: Forecastday_) {
         txt.text = getWeatherCode(f.icon!!)
         txt.textSize = size.toFloat()
     }
 
     fun getWeatherCode(icon: String): String {
-        val icon = icon.replace("nt_", "")
+        val description = icon.replace("nt_", "")
         when {
-            icon.contains("cloudy") -> return Character.toString(0x022.toChar())
-            else -> return Character.toString(0x049.toChar())
+            description.contains("rain") -> return "{wi_day_rain}"
+            description.contains("cloudy") -> return "{wi_day_cloudy}"
+            else -> return "{wi_day_sunny}"
         }
     }
 }
