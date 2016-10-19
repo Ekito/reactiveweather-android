@@ -2,13 +2,10 @@ package fr.ekito.myweatherapp
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
-import android.widget.LinearLayout
 import fr.ekito.myweatherlibrary.WeatherSDK
 import fr.ekito.myweatherlibrary.json.geocode.Geocode
 import fr.ekito.myweatherlibrary.json.weather.Weather
@@ -16,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), WeatherCallback {
 
     lateinit var now: Date
 
@@ -25,55 +22,30 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view -> popLocationDialog(view) }
+        fab.setOnClickListener { view -> DialogHelper.locationDialog(view, this@MainActivity) }
 
         weather_loadlayout.visibility = View.VISIBLE
         weather_mainlayout.visibility = View.GONE
     }
 
     /**
-     * ask location dialog
-     */
-    fun popLocationDialog(view: View) {
-        val input = EditText(this)
-        input.hint = "i.e: Paris, France"
-
-        val builder = AlertDialog.Builder(view.context)
-        builder.setMessage(R.string.location_title).setPositiveButton(R.string.search) { dialog, id ->
-            dialog.dismiss()
-            getWeather(view, input.text.toString())
-        }.setNegativeButton(R.string.cancel) { dialog, id ->
-            // User cancelled the dialog
-            dialog.dismiss()
-        }
-        // Create the AlertDialog object and return it
-        val dialog = builder.create()
-        val lp = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT)
-        input.layoutParams = lp
-        dialog.setView(input)
-        dialog.show()
-    }
-
-    /**
      * get the weather
      */
-    fun getWeather(view: View, address: String) {
+    override fun getWeatherData(view: View, location: String) {
         Snackbar.make(view, "Getting your weather :)", Snackbar.LENGTH_SHORT).show()
 
-        WeatherSDK.getGeocode(address) //Observable<Geocode>
+        WeatherSDK.getGeocode(location) //Observable<Geocode>
                 .map(Geocode::getLocation) //map directly to function
                 .switchMap { location -> WeatherSDK.getWeather(location!!.lat!!, location.lng!!) } // explicit NPE if no location
                 .doOnError { e -> Snackbar.make(view, "Weather Error : $e", Snackbar.LENGTH_LONG).show() }
                 .onErrorReturn { t -> null } // catch uncaught exception & return null
-                .subscribe { weather -> if (weather != null) updateWeather(weather, address) }
+                .subscribe { weather -> if (weather != null) updateWeatherUI(weather, location) }
     }
 
     /**
      * update UI from weather result
      */
-    fun updateWeather(weather: Weather, address: String) {
+    fun updateWeatherUI(weather: Weather, address: String) {
         weather_loadlayout.visibility = View.GONE
         weather_mainlayout.visibility = View.VISIBLE
 
@@ -86,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             val txtForecast = weather.forecast?.simpleforecast
             val forecastday = WeatherUtil.filterForecast(txtForecast!!.forecastday)
             val day0 = forecastday[0]
-            weather_main.text = "Today : " + day0.weatherTxt() + "\n" + day0.getTemp() // Use extensions :)
+            weather_main.text = "Today : ${day0.weatherTxt()}\n${day0.getTemp()}" // Use extensions :)
             WeatherUtil.updateWeatherIcon(weather_mainicon, 100, day0)
 
             WeatherUtil.updateWeatherIcon(weather_day1, 50, forecastday[1])
