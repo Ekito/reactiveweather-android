@@ -56,17 +56,17 @@ class MainActivity : AppCompatActivity(), WeatherCallback {
         weather_mainicon.text = weather.detail.icon
 
         val day1 = weather.nextDays[0]
-        weather_daytext1.text = "${weather_daytext1.text} :\n ${day1.title}"
+        weather_daytext1.text = "day1 :\n ${day1.title}"
         weather_day1.text = day1.icon
         weather_temptext1.text = day1.temp
 
         val day2 = weather.nextDays[1]
-        weather_daytext2.text = "${weather_daytext2.text} :\n ${day2.title}"
+        weather_daytext2.text = "day2 :\n ${day2.title}"
         weather_day2.text = day2.icon
         weather_temptext2.text = day2.temp
 
         val day3 = weather.nextDays[2]
-        weather_daytext3.text = "${weather_daytext3.text} :\n ${day3.title}"
+        weather_daytext3.text = "day3 :\n ${day3.title}"
         weather_day3.text = day3.icon
         weather_temptext3.text = day3.temp
     }
