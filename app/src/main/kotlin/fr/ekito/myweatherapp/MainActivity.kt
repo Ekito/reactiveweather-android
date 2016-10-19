@@ -3,16 +3,21 @@ package fr.ekito.myweatherapp
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import fr.ekito.myweatherapp.model.Weather
 import fr.ekito.myweatherlibrary.WeatherSDK
 import fr.ekito.myweatherlibrary.json.geocode.Geocode
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(), WeatherCallback {
+
+    val TAG: String = MainActivity::class.java.simpleName
+    val realm: Realm = Realm.getDefaultInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +28,9 @@ class MainActivity : AppCompatActivity(), WeatherCallback {
 
         weather_loadlayout.visibility = View.VISIBLE
         weather_mainlayout.visibility = View.GONE
+
+        val all = realm.where(Weather::class.java).findAll()
+        Log.i(TAG, "all weathers stored : ${all.size}")
     }
 
     /**
@@ -35,9 +43,16 @@ class MainActivity : AppCompatActivity(), WeatherCallback {
                 .map(Geocode::getLocation) //map directly to function
                 .switchMap { location -> WeatherSDK.getWeather(location!!.lat!!, location.lng!!) } // explicit NPE if no location
                 .map { weather -> Weather.from(location, weather) }
+                .map { weather ->
+                    realm.executeTransaction { r -> r.insertOrUpdate(weather) }
+                    weather
+                }
                 .subscribe(
                         { weather -> updateWeatherUI(weather) },
-                        { error -> Snackbar.make(view, "Weather Error : $error", Snackbar.LENGTH_LONG).show() }
+                        { error ->
+                            error.printStackTrace()
+                            Snackbar.make(view, "Weather Error : $error", Snackbar.LENGTH_LONG).show()
+                        }
                 )
     }
 

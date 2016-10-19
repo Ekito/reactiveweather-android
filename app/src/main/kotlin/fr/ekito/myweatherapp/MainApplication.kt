@@ -4,6 +4,7 @@ import android.app.Application
 import com.joanzapata.iconify.Iconify
 import com.joanzapata.iconify.fonts.WeathericonsModule
 import fr.ekito.myweatherlibrary.WeatherSDK
+import io.realm.Realm
 
 /**
  * Created by arnaud on 04/08/2016.
@@ -15,7 +16,7 @@ class MainApplication : Application() {
         // init sdk
         WeatherSDK.init(this)
         Iconify.with(WeathericonsModule())
-//        Realm.init(this)
+        Realm.init(this)
 
         instance = this
     }

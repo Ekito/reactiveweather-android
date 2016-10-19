@@ -4,19 +4,21 @@ import fr.ekito.myweatherapp.WeatherUtil
 import fr.ekito.myweatherapp.getTemp
 import fr.ekito.myweatherapp.weatherTxt
 import fr.ekito.myweatherlibrary.json.weather.Weather
+import io.realm.RealmList
+import io.realm.RealmObject
 import java.util.*
 
 /**
  * Created by arnaud on 19/10/2016.
  */
-class Weather(val location: String, val date: Date) {
+open class Weather constructor(var location: String = "", var date: Date = Date()) : RealmObject() {
 
-    lateinit var detail: WeatherDetail
-    var nextDays: ArrayList<WeatherDetail> = ArrayList()
+    open lateinit var detail: WeatherDetail
+    open var nextDays: RealmList<WeatherDetail> = RealmList()
 
     companion object {
         fun from(location: String, weather: Weather): fr.ekito.myweatherapp.model.Weather {
-            val w = Weather(location, Date())
+            val w = Weather(location.trim().replace(" ", "").toLowerCase(), Date())
             //weather details
             if (weather.forecast != null) {
                 val txtForecast = weather.forecast?.simpleforecast
