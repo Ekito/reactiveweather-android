@@ -20,7 +20,7 @@ object DialogHelper {
         val builder = AlertDialog.Builder(view.context)
         builder.setMessage(R.string.location_title).setPositiveButton(R.string.search) { dialog, id ->
             dialog.dismiss()
-            callback.getWeatherData(view, input.text.toString())
+            callback.getWeatherData(view, input.text.toString().trim().replace(" ", ""))
         }.setNegativeButton(R.string.cancel) { dialog, id ->
             // User cancelled the dialog
             dialog.dismiss()

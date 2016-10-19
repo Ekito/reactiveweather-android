@@ -34,4 +34,10 @@ open class Weather constructor(var location: String = "", var date: Date = Date(
             return w
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is fr.ekito.myweatherapp.model.Weather) {
+            return location.equals(other.location)
+        } else return false
+    }
 }
