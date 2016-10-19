@@ -1,6 +1,5 @@
 package fr.ekito.myweatherapp
 
-import com.joanzapata.iconify.widget.IconTextView
 import fr.ekito.myweatherlibrary.json.geocode.Geocode
 import fr.ekito.myweatherlibrary.json.geocode.Location
 import fr.ekito.myweatherlibrary.json.weather.Forecastday_
@@ -24,19 +23,8 @@ fun Forecastday_.getTemp(): String {
 
 // helper
 object WeatherUtil {
-
-    fun filterForecast(forecastday: List<Forecastday_>): List<Forecastday_> {
-        return forecastday.filter { f -> !f.icon!!.startsWith("nt_") }
-                .take(4)
-    }
-
-    fun updateWeatherIcon(txt: IconTextView, size: Int, f: Forecastday_) {
-        txt.text = getWeatherCode(f.icon!!)
-        txt.textSize = size.toFloat()
-    }
-
-    fun getWeatherCode(icon: String): String {
-        val description = icon.replace("nt_", "")
+    fun getWeatherCode(f: Forecastday_): String {
+        val description = f.icon!!.replace("nt_", "")
         when {
             description.contains("rain") -> return "{wi_day_rain}"
             description.contains("cloudy") -> return "{wi_day_cloudy}"

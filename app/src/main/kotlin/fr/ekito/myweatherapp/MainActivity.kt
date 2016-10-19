@@ -6,16 +6,13 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import fr.ekito.myweatherapp.model.Weather
 import fr.ekito.myweatherlibrary.WeatherSDK
 import fr.ekito.myweatherlibrary.json.geocode.Geocode
-import fr.ekito.myweatherlibrary.json.weather.Weather
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import java.util.*
 
 class MainActivity : AppCompatActivity(), WeatherCallback {
-
-    lateinit var now: Date
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,42 +34,41 @@ class MainActivity : AppCompatActivity(), WeatherCallback {
         WeatherSDK.getGeocode(location) //Observable<Geocode>
                 .map(Geocode::getLocation) //map directly to function
                 .switchMap { location -> WeatherSDK.getWeather(location!!.lat!!, location.lng!!) } // explicit NPE if no location
-                .doOnError { e -> Snackbar.make(view, "Weather Error : $e", Snackbar.LENGTH_LONG).show() }
-                .onErrorReturn { t -> null } // catch uncaught exception & return null
-                .subscribe { weather -> if (weather != null) updateWeatherUI(weather, location) }
+                .map { weather -> Weather.from(location, weather) }
+                .subscribe(
+                        { weather -> updateWeatherUI(weather) },
+                        { error -> Snackbar.make(view, "Weather Error : $error", Snackbar.LENGTH_LONG).show() }
+                )
     }
 
     /**
      * update UI from weather result
      */
-    fun updateWeatherUI(weather: Weather, address: String) {
+    fun updateWeatherUI(weather: Weather) {
         weather_loadlayout.visibility = View.GONE
         weather_mainlayout.visibility = View.VISIBLE
 
-        now = Date()
         val timeFormat = android.text.format.DateFormat.getTimeFormat(MainApplication.get())
         val dateFormat = android.text.format.DateFormat.getDateFormat(MainApplication.get())
-        weather_title.text = getString(R.string.weather_title) + " " + address + "\n" + dateFormat.format(now) + " " + timeFormat.format(now)
+        weather_title.text = "${getString(R.string.weather_title)} ${weather.location} \n ${dateFormat.format(weather.date)} ${timeFormat.format(weather.date)}"
 
-        if (weather.forecast != null) {
-            val txtForecast = weather.forecast?.simpleforecast
-            val forecastday = WeatherUtil.filterForecast(txtForecast!!.forecastday)
-            val day0 = forecastday[0]
-            weather_main.text = "Today : ${day0.weatherTxt()}\n${day0.getTemp()}" // Use extensions :)
-            WeatherUtil.updateWeatherIcon(weather_mainicon, 100, day0)
+        weather_main.text = "Today : ${weather.detail.title}\n${weather.detail.temp}" // Use extensions :)
+        weather_mainicon.text = weather.detail.icon
 
-            WeatherUtil.updateWeatherIcon(weather_day1, 50, forecastday[1])
-            val day1 = forecastday[1]
-            weather_temptext1.text = day1.getTemp()
+        val day1 = weather.nextDays[0]
+        weather_daytext1.text = "${weather_daytext1.text} :\n ${day1.title}"
+        weather_day1.text = day1.icon
+        weather_temptext1.text = day1.temp
 
-            val day2 = forecastday[2]
-            WeatherUtil.updateWeatherIcon(weather_day2, 50, day2)
-            weather_temptext2.text = day2.getTemp()
+        val day2 = weather.nextDays[1]
+        weather_daytext2.text = "${weather_daytext2.text} :\n ${day2.title}"
+        weather_day2.text = day2.icon
+        weather_temptext2.text = day2.temp
 
-            val day3 = forecastday[3]
-            WeatherUtil.updateWeatherIcon(weather_day3, 50, day3)
-            weather_temptext3.text = day3.getTemp()
-        }
+        val day3 = weather.nextDays[2]
+        weather_daytext3.text = "${weather_daytext3.text} :\n ${day3.title}"
+        weather_day3.text = day3.icon
+        weather_temptext3.text = day3.temp
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

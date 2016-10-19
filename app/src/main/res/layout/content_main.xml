@@ -72,6 +72,7 @@
             app:layout_constraintLeft_toLeftOf="@+id/weather_title"
             app:layout_constraintTop_toBottomOf="@+id/weather_title"
             android:text="Weather Icon"
+            android:textSize="100sp"
             android:layout_marginStart="8dp" />
 
         <TextView
@@ -124,6 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/weather_margin"
                 android:gravity="center"
+                android:textSize="50sp"
                 android:textColor="@color/white" />
 
             <TextView
@@ -167,6 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/weather_margin"
                 android:gravity="center"
+                android:textSize="50sp"
                 android:textColor="@color/white" />
 
             <TextView
@@ -208,6 +211,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/weather_margin"
                 android:gravity="center"
+                android:textSize="50sp"
                 android:textColor="@color/white" />
 
             <TextView
