@@ -25,10 +25,10 @@ fun Forecastday_.getTemp(): String {
 object WeatherUtil {
     fun getWeatherCode(f: Forecastday_): String {
         val description = f.icon!!.replace("nt_", "")
-        when {
-            description.contains("rain") -> return "{wi_day_rain}"
-            description.contains("cloudy") -> return "{wi_day_cloudy}"
-            else -> return "{wi_day_sunny}"
+        return when {
+            description.contains("rain") -> "{wi_day_rain}"
+            description.contains("cloudy") -> "{wi_day_cloudy}"
+            else -> "{wi_day_sunny}"
         }
     }
 }

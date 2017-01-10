@@ -2,7 +2,7 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.0.4'
+        kotlin_version = '1.0.6'
         retrofit_version = '2.1.0'
         okhttp_version = '3.3.1'
     }
@@ -10,7 +10,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.1'
+        classpath 'com.android.tools.build:gradle:2.2.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
